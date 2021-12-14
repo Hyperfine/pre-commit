@@ -113,9 +113,9 @@
 
 - id: conventional-pre-commit
   name: Conventional Commit
-  entry: conventional-pre-commit.sh
-  language: script
   description: Checks commit message for Conventional Commits formatting
+  entry: ./hooks/conventional-pre-commit.sh
+  language: script
   always_run: true
   stages: [commit-msg]
 
