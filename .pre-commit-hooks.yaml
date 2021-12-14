@@ -110,3 +110,12 @@
   entry: ./hooks/check_skip_env.py
   language: script
   files: \.go$
+
+- id: conventional-pre-commit
+  name: Conventional Commit
+  entry: conventional-pre-commit.sh
+  language: script
+  description: Checks commit message for Conventional Commits formatting
+  always_run: true
+  stages: [commit-msg]
+
