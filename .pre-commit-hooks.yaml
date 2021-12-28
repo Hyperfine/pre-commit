@@ -107,15 +107,25 @@
 - id: check-terratest-skip-env
   name: check-terratest-skip-env
   description: Check all go source files for any uncommented os.Setenv calls setting a terratest SKIP environment.
-  entry: ./hooks/check_skip_env.py
+  entry: hooks/check_skip_env.py
   language: script
   files: \.go$
 
 - id: conventional-pre-commit
   name: Conventional Commit
-  entry: conventional-pre-commit.sh
-  language: script
   description: Checks commit message for Conventional Commits formatting
+  entry: hooks/conventional_pre_commit.py
+  language: script
   always_run: true
   stages: [commit-msg]
+
+- id: vulture
+  name: vulture
+  description: Find unused Python code.
+  entry: hooks/vulture/vulture
+  language: python
+  types: [python]
+  pass_filenames: false
+  require_serial: true
+  
 
