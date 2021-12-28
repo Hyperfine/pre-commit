@@ -1,0 +1,12 @@
+*.py[cod]
+MANIFEST
+build/
+coverage.xml
+dist/
+htmlcov/
+vulture.egg-info/
+.cache/
+.coverage
+.pytest_cache/
+.tox/
+.venv/
