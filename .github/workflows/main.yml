@@ -8,7 +8,7 @@ on:
 
 jobs:
   update_subtrees:
-    name: "Update ${{ matrix.subtree-path }}"
+    name: Update downstream ${{ matrix.path }} package
     runs-on: "ubuntu-latest"
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -17,31 +17,32 @@ jobs:
     strategy:
       matrix:
         include:
-          - subtree-path: hooks/vulture
-            subtree-repo: git@github.com:jendrikseipp/vulture.git
-            subtree-branch: master
-          - subtree-path: hooks/pre-commit-hooks
-            subtree-repo: git@github.com:pre-commit/pre-commit-hooks.git
-            subtree-branch: master
-          - subtree-path: hooks/mirrors-mypy
-            subtree-repo: git@github.com:pre-commit/mirrors-mypy.git
-            subtree-branch: master
+          - path: hooks/vulture
+            repo: git@github.com:jendrikseipp/vulture.git
+            branch: master
+          - path: hooks/pre-commit-hooks
+            repo: git@github.com:pre-commit/pre-commit-hooks.git
+            branch: master
+          - path: hooks/mirrors-mypy
+            repo: git@github.com:pre-commit/mirrors-mypy.git
+            branch: master
 
     steps:
-      - uses: "actions/checkout@v2"
+      - uses: actions/checkout@v2
         with:
-          persist-credentials: false
-      - uses: webfactory/ssh-agent@v0.5.4
-        with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: "Update subtree ${{ matrix.subtree-path }}"
+          fetch-depth: 0
+      - name: Reconfigure git to use HTTP authentication
+        run: >
+          git config --global url."https://github.com/".insteadOf
+          ssh://git@github.com/
+      - name: "Update subtree ${{ matrix.path }}"
         run: |
-          git subtree pull --prefix ${{ matrix.subtree-path }} ${{ matrix.subtree-repo }} ${{ matrix.subtree-branch }}
+          git subtree pull --prefix ${{ matrix.path }} ${{ matrix.repo }} ${{ matrix.branch }}
       - name: Commit update
         run: |
           git config --global user.name 'Git bot'
           git config --global user.email 'devops+gitbot@hyperfine.io'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          git commit -am "Auto updated ${{ matrix.subtree-path }}" && git push || echo "No changes to commit"
+          git commit -am "Auto updated ${{ matrix.path }}" && git push || echo "No changes to commit"
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
