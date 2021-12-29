@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 """Python script to check for conventional commit style."""
 
+import os
 from pathlib import Path
+import subprocess
+import argparse
 
 import toml
 
@@ -10,16 +13,24 @@ DEFAULT_CC_SCOPES = []
 VALID_COMMIT_START_CHARS = [":", "!:"]
 
 
-def cc_check():
+def get_git_root():
+    """ Returns the root directory of the git repository, assuming this script is run from within the repository. """
+    result = subprocess.run(['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, check=True)
+    if result.stdout is None:
+        # TODO: concrete exception
+        raise Exception('Did not get any output from git: stderr is "{}"'.format(result.stderr))
+    return result.stdout.decode('utf-8').rstrip('\n')
+
+
+def cc_check(project_dir: str):
     """Retrieve the git commit message and check it for CC style.
 
     CC stands for conventional commits [https://conventionalcommits.org]
     Not using regex.
+
+    Args:
+        project_dir (str): The root directory of the project.
     """
-
-    # Setup
-    project_dir = Path(__file__).parents[1]
-
     # Retrieve conventional commit configuration from pyproject.toml
     pyproject_file = project_dir / "pyproject.toml"
     toml_dict = toml.load(open(pyproject_file))
@@ -100,9 +111,30 @@ Example:
         raise ValueError(error_msg)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description=(
+            'A CLI for checking commit messages against the conventional commit standard '
+            'Optionally takes in a project directory to check. Defaults to the current working directory.'
+        ),
+    )
+    parser.add_argument(
+        'project_dir',
+        metavar='PROJECT_DIR',
+        type=str,
+        nargs='?',
+        default=os.getcwd(),
+        help='The project directory. Defaults to the current working directory.',
+    )
+    args = parser.parse_args()
+    return args
+
+
 def main():
+    args = parse_args()
+    project_dir = Path(args.project_dir)
     try:
-        cc_check()
+        cc_check(project_dir=project_dir)
     except ValueError as exc:
         raise Exception().with_traceback(exc.__traceback__)
 
