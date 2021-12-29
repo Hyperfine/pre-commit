@@ -26,6 +26,7 @@ jobs:
           python-version: "${{ matrix.python-version }}"
       - name: "Install dependencies"
         run: |
+          cd test
           python -VV
           python -m site
           python -m pip install --upgrade coverage[toml] virtualenv tox tox-gh-actions pytest        
@@ -33,4 +34,4 @@ jobs:
       - name: "Run tox targets for ${{ matrix.python-version }}"
         run: |
           cd test
-          python -m tox
+          tox
