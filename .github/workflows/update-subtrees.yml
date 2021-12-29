@@ -4,7 +4,7 @@ name: Update Subtrees
 on:
   workflow_dispatch:
   schedule:
-    - cron: '12 27 * * *'
+    - cron:  '30 5,17 * * *'
 
 jobs:
   update_subtrees:
