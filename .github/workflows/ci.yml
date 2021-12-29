@@ -34,4 +34,5 @@ jobs:
       - name: "Run tox targets for ${{ matrix.python-version }}"
         run: |
           cd test
+          mv fixtures/git fixtures/.git
           tox

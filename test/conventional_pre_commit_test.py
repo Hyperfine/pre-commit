@@ -3,6 +3,7 @@ import sys
 import glob
 import unittest
 import tempfile
+from pathlib import Path
 
 if sys.version_info[0] < 3:
     import subprocess32 as subprocess
@@ -32,11 +33,11 @@ class TestConventionalPreCommit(unittest.TestCase):
         self.root = get_git_root()
         self.hook_script = os.path.join(self.root, 'hooks', 'conventional_pre_commit.py')
         self.fixture_dir = os.path.join(self.root, 'test', 'fixtures')
-        self.invalid_git_dir = tempfile.gettempdir()
-        self.git_dir = os.path.join(self.fixture_dir, 'git')
-
-    def tearDown(self):
-        write_commit_message("", self.git_dir)
+        self.invalid_project_dir = tempfile.mkdtemp()
+        self.invalid_git_dir = os.path.join(self.invalid_project_dir, "git")
+        self.project_dir = tempfile.mkdtemp()
+        self.git_dir = os.path.join(self.project_dir, ".git")
+        Path(self.git_dir).mkdir(parents=True, exist_ok=True)
 
     def _check_success(self, project_dir, pyproject_toml):
         subprocess.run([self.hook_script, "--project_dir", project_dir, "--toml", pyproject_toml], check=True)
@@ -46,97 +47,97 @@ class TestConventionalPreCommit(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
 
     def test_invalid_git_dir(self):
-        self._check_failure(self.invalid_git_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.invalid_project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
     def test_valid_commit_message_default(self):
         commit_msg = "build(precommit): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_success(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_success(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
     def test_invalid_commit_message_default(self):
         commit_msg = "This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
     def test_invalid_commit_message_default_empty_commit(self):
         commit_msg = ""
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
     def test_invalid_commit_message_default_empty_commit_description(self):
         commit_msg = "build(precommit):"
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
     
     def test_invalid_commit_message_default_invalid_commit_separator(self):
         commit_msg = "build(precommit)!"
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
    
     def test_invalid_commit_message_default_no_scope(self):
         commit_msg = "build: This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
     def test_invalid_commit_message_default_no_type(self):
         commit_msg = "(build): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
     def test_valid_commit_message_required_scope(self):
         commit_msg = "build(tools): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_success(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.scope_only'))
+        self._check_success(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.scope_only'))
 
     def test_invalid_commit_message_required_scope(self):
         commit_msg = "build(precommit): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.scope_only'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.scope_only'))
 
     def test_valid_commit_message_required_type(self):
         commit_msg = "feat(tools): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_success(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.type_only'))
+        self._check_success(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.type_only'))
 
     def test_invalid_commit_message_required_type(self):
         commit_msg = "chore(precommit): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.type_only'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.type_only'))
 
     def test_valid_commit_message_required_type_and_scope(self):
         commit_msg = "build(config): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_success(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.complete'))
+        self._check_success(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.complete'))
 
     def test_invalid_commit_message_required_type_and_scope(self):
         commit_msg = "chore(chore): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.complete'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.complete'))
 
     def test_invalid_commit_message_required_type_and_scope_invalid_type(self):
         commit_msg = "chore(config): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.complete'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.complete'))
 
     def test_invalid_commit_message_required_type_and_scope_invalid_scope(self):
         commit_msg = "build(chore): This is a sample commit message."
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.complete'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.complete'))
 
     def test_valid_commit_message_breaking_change(self):
         commit_msg = """build(config)!: This is a sample commit message.
@@ -145,7 +146,7 @@ BREAKING CHANGE: This is a breaking change description.
 """
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_success(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_success(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
     def test_invalid_commit_message_breaking_change_missing_title(self):
         commit_msg = """build(config): This is a sample commit message.
@@ -154,7 +155,7 @@ BREAKING CHANGE: This is a breaking change description.
 """
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
     def test_invalid_commit_message_breaking_change_missing_description_callout(self):
         commit_msg = """build(config)!: This is a sample commit message.
@@ -163,7 +164,7 @@ This is a breaking change description.
 """
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
     def test_invalid_commit_message_breaking_change_missing_description(self):
         commit_msg = """build(config)!: This is a sample commit message.
@@ -172,7 +173,7 @@ BREAKING CHANGE:
 """
         write_commit_message(COMMIT_MESSAGE_FOOTER_TEMPLATE.format(commit_msg=commit_msg), self.git_dir)
 
-        self._check_failure(self.fixture_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
+        self._check_failure(self.project_dir, os.path.join(self.fixture_dir, 'pyproject.toml.default'))
 
 
 def write_commit_message(commit_msg: str, git_dir: str) -> None:
