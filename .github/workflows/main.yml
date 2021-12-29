@@ -18,13 +18,13 @@ jobs:
       matrix:
         include:
           - path: hooks/vulture
-            repo: git@github.com:jendrikseipp/vulture.git
+            repo: https://github.com/jendrikseipp/vulture.git
             branch: master
           - path: hooks/pre-commit-hooks
-            repo: git@github.com:pre-commit/pre-commit-hooks.git
+            repo: https://github.com/pre-commit/pre-commit-hooks.git
             branch: master
           - path: hooks/mirrors-mypy
-            repo: git@github.com:pre-commit/mirrors-mypy.git
+            repo: https://github.com/pre-commit/mirrors-mypy.git
             branch: master
 
     steps:
