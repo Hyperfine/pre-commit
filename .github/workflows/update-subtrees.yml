@@ -1,0 +1,40 @@
+---
+name: Update Subtrees
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '12 27 * * *'
+
+jobs:
+  update_subtrees:
+    name: "Update ${{ matrix.subtree-path }}"
+    runs-on: "ubuntu-latest"
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        include:
+          - subtree-path: hooks/vulture
+            subtree-repo: git@github.com:jendrikseipp/vulture
+            subtree-branch: master
+          - subtree-path: hooks/pre-commit-hooks
+            subtree-repo: git@github.com:pre-commit/pre-commit-hooks
+            subtree-branch: master
+          - subtree-path: hooks/mirrors-mypy
+            subtree-repo: git@github.com:pre-commit/mirrors-mypy
+            subtree-branch: master
+
+    steps:
+      - uses: "actions/checkout@v2"
+      - name: "Update subtree ${{ matrix.subtree-path }}"
+        run: |
+          git subtree pull --prefix ${{ matrix.subtree-path }} ${{ matrix.subtree-repo }} ${{ matrix.subtree-branch }}
+      - name: Commit update
+        run: |
+          git config --global user.name 'Git bot'
+          git config --global user.email 'devops+gitbot@hyperfine.io'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git commit -am "Auto updated ${{ matrix.subtree-path }}" && git push || echo "No changes to commit"
