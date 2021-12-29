@@ -31,10 +31,9 @@ jobs:
       - uses: "actions/checkout@v2"
         with:
           persist-credentials: false
-      - name: Reconfigure git to use HTTP authentication
-        run: >
-          git config --global url."https://github.com/".insteadOf
-          ssh://git@github.com/
+      - uses: webfactory/ssh-agent@v0.5.4
+        with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: "Update subtree ${{ matrix.subtree-path }}"
         run: |
           git subtree pull --prefix ${{ matrix.subtree-path }} ${{ matrix.subtree-repo }} ${{ matrix.subtree-branch }}
