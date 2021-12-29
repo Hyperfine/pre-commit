@@ -128,15 +128,13 @@
   pass_filenames: false
   require_serial: true
   
--   id: mypy
-    name: mypy
-    description: Static type checking for Python.
-    entry: hooks/mirrors-mypy
-    language: python
-    'types_or': [python, pyi]
-    args: ["--ignore-missing-imports", "--scripts-are-modules"]
-    require_serial: true
-    additional_dependencies: []
-    minimum_pre_commit_version: '2.9.2'
-
-
+- id: mypy
+  name: mypy
+  description: Static type checking for Python.
+  entry: hooks/mirrors-mypy
+  language: python
+  'types_or': [python, pyi]
+  args: ["--ignore-missing-imports", "--scripts-are-modules"]
+  require_serial: true
+  additional_dependencies: []
+  minimum_pre_commit_version: '2.9.2'
