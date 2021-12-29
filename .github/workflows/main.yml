@@ -43,3 +43,5 @@ jobs:
           git config --global user.email 'devops+gitbot@hyperfine.io'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "Auto updated ${{ matrix.subtree-path }}" && git push || echo "No changes to commit"
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
