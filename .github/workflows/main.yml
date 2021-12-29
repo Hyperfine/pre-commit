@@ -18,13 +18,13 @@ jobs:
       matrix:
         include:
           - subtree-path: hooks/vulture
-            subtree-repo: git@github.com:jendrikseipp/vulture
+            subtree-repo: git@github.com:jendrikseipp/vulture.git
             subtree-branch: master
           - subtree-path: hooks/pre-commit-hooks
-            subtree-repo: git@github.com:pre-commit/pre-commit-hooks
+            subtree-repo: git@github.com:pre-commit/pre-commit-hooks.git
             subtree-branch: master
           - subtree-path: hooks/mirrors-mypy
-            subtree-repo: git@github.com:pre-commit/mirrors-mypy
+            subtree-repo: git@github.com:pre-commit/mirrors-mypy.git
             subtree-branch: master
 
     steps:
