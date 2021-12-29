@@ -33,13 +33,10 @@ class TestConventionalPreCommit(unittest.TestCase):
         self.hook_script = os.path.join(self.root, 'hooks', 'conventional_pre_commit.py')
         self.fixture_dir = os.path.join(self.root, 'test', 'fixtures')
         self.invalid_git_dir = tempfile.gettempdir()
-        self.git_dir = os.path.join(self.fixture_dir, '.git')
+        self.git_dir = os.path.join(self.fixture_dir, 'git')
 
     def tearDown(self):
-        try:
-            write_commit_message("", self.git_dir)
-        except OSError:
-            return
+        write_commit_message("", self.git_dir)
 
     def _check_success(self, project_dir, pyproject_toml):
         subprocess.run([self.hook_script, "--project_dir", project_dir, "--toml", pyproject_toml], check=True)
