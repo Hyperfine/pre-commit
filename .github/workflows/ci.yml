@@ -1,0 +1,37 @@
+---
+name: CI
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: "Python ${{ matrix.python-version }}"
+    runs-on: "ubuntu-latest"
+    env:
+      USING_COVERAGE: '3.7,3.8,3.9,3.10'
+
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
+
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "actions/setup-python@v2"
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: "Install dependencies"
+        run: |
+          cd test
+          python -VV
+          python -m site
+          python -m pip install --upgrade coverage[toml] virtualenv tox tox-gh-actions pytest        
+
+      - name: "Run tox targets for ${{ matrix.python-version }}"
+        run: |
+          cd test
+          tox

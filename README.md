@@ -1,26 +1,24 @@
-[![Maintained by Gruntwork.io](https://img.shields.io/badge/maintained%20by-gruntwork.io-%235849a6.svg)](https://gruntwork.io/?ref=repo_pre-commit)
+[![Maintained by Hyperfine](https://img.shields.io/badge/maintained%20by-Hyperfine-343B8A.svg)](https://github.com/Hyperfine/)
 
 # Pre-commit hooks
 
 This repo defines Git pre-commit hooks intended for use with [pre-commit](http://pre-commit.com/). The currently
 supported hooks are:
 
-* **terraform-fmt**: Automatically run `terraform fmt` on all Terraform code (`*.tf` files).
-* **terraform-validate**: Automatically run `terraform validate` on all Terraform code (`*.tf` files).
-* **packer-validate**: Automatically run `packer validate` on all Packer code (`*.pkr.*` files).
-* **terragrunt-hclfmt**: Automatically run `terragrunt hclfmt` on all Terragrunt configurations.
-* **tflint**: Automatically run [`tflint`](https://github.com/terraform-linters/tflint) on all Terraform code (`*.tf` files).
-* **shellcheck**: Run [`shellcheck`](https://www.shellcheck.net/) to lint files that contain a bash [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)).
-* **gofmt**: Automatically run `gofmt` on all Golang code (`*.go` files).
-* **goimports**: Automatically run `goimports` on all Golang code (`*.go` files).
-* **golint**: Automatically run `golint` on all Golang code (`*.go` files).
-* **yapf**: Automatically run [`yapf`](https://github.com/google/yapf) on all python code (`*.py` files).
-* **helmlint** Automatically run [`helm lint`](https://helm.sh/docs/helm/helm_lint/) on your Helm chart files. [See caveats here](#helm-lint-caveats).
-* **markdown-link-check** Automatically run [markdown-link-check](https://github.com/tcort/markdown-link-check) on
-  markdown doc files.
-
-
-
+* **terraform-fmt**: Rewrites all Terraform configuration files to a canonical format
+* **terraform-validate**: Validates all Terraform configuration files
+* **packer-validate**: Validates all Packer configuration files
+* **tflint**: Linter for Terraform source code
+* **terragrunt-hclfmt**: Rewrites all Terragrunt configuration files to a canonical format
+* **shellcheck**: Performs linting on bash scripts
+* **gofmt**: Gofmt formats Go programs
+* **goimports**: Goimports updates imports and formats in the same style as gofmt
+* **golint**: Golint is a linter for Go source code
+* **yapf**: yapf (Yet Another Python Formatter) is a python formatter from Google
+* **helmlint**: Run helm lint, a linter for helm charts
+* **markdown-link-check**: Run markdown-link-check to check all the relative and absolute links in markdown docs.
+* **check-terratest-skip-env**: Check all go source files for any uncommented os.Setenv calls setting a terratest SKIP environment.
+* **conventional-pre-commit**: Checks commit message for Conventional Commits formatting
 
 ## General Usage
 
@@ -29,7 +27,7 @@ In each of your repos, add a file called `.pre-commit-config.yaml` with the fol
 ```yaml
 repos:
   - repo: https://github.com/Hyperfine/pre-commit
-    rev: <VERSION> # Get the latest from: https://github.com/gruntwork-io/pre-commit/releases
+    rev: <VERSION> # Get the latest from: https://github.com/Hyperfine/pre-commit/releases
     hooks:
       - id: terraform-fmt
       - id: terraform-validate
@@ -46,11 +44,7 @@ Next, have every developer: 
 
 That’s it! Now every time you commit a code change (`.tf` file), the hooks in the `hooks:` config will execute.
 
-
-
-
 ## Running Against All Files At Once
-
 
 ### Example: Formatting all files
 
@@ -59,8 +53,6 @@ If you'd like to format all of your code at once (rather than one file at a time
 ```bash
 pre-commit run terraform-fmt --all-files
 ```
-
-
 
 ### Example: Enforcing in CI
 
@@ -75,9 +67,6 @@ pre-commit run --all-files
 
 If all the hooks pass, the last command will exit with an exit code of 0. If any of the hooks make changes (e.g.,
 because files are not formatted), the last command will exit with a code of 1, causing the build to fail.
-
-
-
 
 ## Helm Lint Caveats
 
@@ -124,7 +113,7 @@ containerImage: nginx
 
 Now when the pre-commit hook runs, it will call `helm lint` with both `linter_values.yaml` and `values.yaml`:
 
-```
+```shell
 helm lint -f values.yaml -f linter_values.yaml .
 ```
 
@@ -135,16 +124,16 @@ Other shellcheck flags can not be passed through.
 
 ```yaml
 repos:
-  - repo: https://github.com/gruntwork-io/pre-commit
+  - repo: https://github.com/Hyperfine/pre-commit
     rev: <VERSION>
     hooks:
       - id: shellcheck
         args: ["--enable require-variable-braces,deprecate-which"]
 ```
 
-
 ## License
 
 This code is released under the Apache 2.0 License. Please see [LICENSE](LICENSE) and [NOTICE](NOTICE) for more details.
 
 Copyright &copy; 2019 Gruntwork, Inc.
+Copyright &copy; 2021 Hyperfine, Inc.
