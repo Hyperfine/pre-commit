@@ -1,0 +1,10 @@
+repos:
+  - repo: local
+    hooks:
+    - id: conventional-pre-commit
+      name: conventional-pre-commit
+      always_run: true
+      entry: poetry run python3 hooks/conventional-pre-commit.py
+      language: system
+      stages: [commit-msg]
+
