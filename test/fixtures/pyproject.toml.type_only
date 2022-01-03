@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "pre-commit"
+version = "0.1.0"
+description = "Pre-commit hoooks for Hyperfine."
+authors = ["Joel Castillo <jcastillo@hyperfine.io>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "3.7"
+
+[tool.poetry.dev-dependencies]
+
+[tool.conventional_commit_check]
+types = ["build", "feat", "fix", "test"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
