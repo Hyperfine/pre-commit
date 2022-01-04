@@ -83,18 +83,22 @@ Example:
 
     # Validate the type in the commit message.
     cc_type_start_index = 0
-    cc_type_end_index = commit_msg.index("(")
-    cc_type = commit_msg[cc_type_start_index:cc_type_end_index]
-    if cc_type not in cc_types:
+    try:
+        cc_type_end_index = commit_msg.index("(")
+        cc_type = commit_msg[cc_type_start_index:cc_type_end_index]
+        if cc_type not in cc_types:
+            raise ValueError(error_msg)
+    except ValueError:
         raise ValueError(error_msg)
 
     # Validate the scope in the commit message.
-    cc_scope_start_index = cc_type_end_index + 1
-    cc_scope_end_index = commit_msg.index(")")
-    cc_scope = commit_msg[cc_scope_start_index:cc_scope_end_index]
-    if cc_scopes and cc_scope not in cc_scopes:
-        print(cc_scope)
-        print(cc_scopes)
+    try:
+        cc_scope_start_index = cc_type_end_index + 1
+        cc_scope_end_index = commit_msg.index(")")
+        cc_scope = commit_msg[cc_scope_start_index:cc_scope_end_index]
+        if cc_scopes and cc_scope not in cc_scopes:
+            raise ValueError(error_msg)
+    except ValueError:
         raise ValueError(error_msg)
     commit_msg = commit_msg[cc_scope_end_index + 1:]
 
