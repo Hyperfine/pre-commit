@@ -3,9 +3,9 @@
 
 import os
 from pathlib import Path
-import subprocess
 import argparse
 import toml
+import sys
 
 DEFAULT_CC_TYPES = ["build", "chore", "ci", "docs", "feat", "fix", "perf", "refactor", "revert", "style", "test"]
 DEFAULT_CC_SCOPES = []
@@ -79,7 +79,7 @@ Example:
 """
     # Validate that the commit message is not just an empty string
     if not commit_msg:
-        raise ValueError(error_msg)
+        sys.exit(error_msg)
 
     # Validate the type in the commit message.
     cc_type_start_index = 0
@@ -87,9 +87,9 @@ Example:
         cc_type_end_index = commit_msg.index("(")
         cc_type = commit_msg[cc_type_start_index:cc_type_end_index]
         if cc_type not in cc_types:
-            raise ValueError(error_msg)
+            sys.exit(error_msg)
     except ValueError:
-        raise ValueError(error_msg)
+        sys.exit(error_msg)
 
     # Validate the scope in the commit message.
     try:
@@ -97,9 +97,9 @@ Example:
         cc_scope_end_index = commit_msg.index(")")
         cc_scope = commit_msg[cc_scope_start_index:cc_scope_end_index]
         if cc_scopes and cc_scope not in cc_scopes:
-            raise ValueError(error_msg)
+            sys.exit(error_msg)
     except ValueError:
-        raise ValueError(error_msg)
+        sys.exit(error_msg)
     commit_msg = commit_msg[cc_scope_end_index + 1:]
 
     # Validate that the commit message begins with either a ":" or "!:" (for breaking changes).
@@ -107,26 +107,26 @@ Example:
     try:
         colon_index = commit_msg.index(":")
     except ValueError:
-        raise ValueError(error_msg)
+        sys.exit(error_msg)
     commit_msg = commit_msg[colon_index + 1:]
 
     # Validate that the commit message actually exists
     if not commit_msg:
-        raise ValueError(error_msg)
+        sys.exit(error_msg)
 
     # Validate that the breaking change description exists in the commit, if this is a breaking change.
     if breaking_change:
         if "BREAKING CHANGE:" not in commit_msg:
-            raise ValueError(error_msg)
+            sys.exit(error_msg)
         breaking_change_start_index = commit_msg.index("BREAKING CHANGE:")
         breaking_change_end_index = breaking_change_start_index + len("BREAKING CHANGE:")
         breaking_change_msg = commit_msg[breaking_change_end_index + 1:]
 
         # Validate that the description of the breaking change is non-zero length.
         if breaking_change and not breaking_change_msg:
-            raise ValueError(error_msg)
+            sys.exit(error_msg)
     if not breaking_change and "BREAKING CHANGE:" in commit_msg:
-        raise ValueError(error_msg)
+        sys.exit(error_msg)
 
 
 def parse_args():
@@ -160,10 +160,12 @@ def parse_args():
 
 def main():
     args = parse_args()
-    print(args)
     project_dir = Path(args.project_dir)
     pyproject_file = Path(args.toml)
-    cc_check(project_dir=project_dir, pyproject_file=pyproject_file)
+    try:
+        cc_check(project_dir=project_dir, pyproject_file=pyproject_file)
+    except ValueError as e:
+        sys.exit(str(e))
 
 
 if __name__ == '__main__':
