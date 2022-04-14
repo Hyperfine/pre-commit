@@ -19,6 +19,8 @@ supported hooks are:
 * **markdown-link-check**: Run markdown-link-check to check all the relative and absolute links in markdown docs.
 * **check-terratest-skip-env**: Check all go source files for any uncommented os.Setenv calls setting a terratest SKIP environment.
 * **conventional-pre-commit**: Checks commit message for Conventional Commits formatting
+* **PEP-672**: Checks Python files for PEP-672 violations, non-ASCII characters.
+* **forbidden-files**: Prevents edits to a predefined list of files.
 
 ## General Usage
 

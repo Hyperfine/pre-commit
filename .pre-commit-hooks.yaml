@@ -119,3 +119,15 @@
   always_run: true
   stages: [commit-msg]
 
+- id: PEP-672
+  name: PEP-672
+  description: Checks Python files for PEP-672 violations, non-ASCII characters.
+  entry: hooks/check_pep672_ascii.py
+  language: script
+
+- id: forbidden-files
+  name: forbidden-files
+  description: Prevents edits to a predefined list of files.
+  entry: hooks/prevent-file-edits.py
+  language: script
+  pass_filenames: false
