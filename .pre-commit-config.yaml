@@ -8,3 +8,16 @@ repos:
       language: system
       stages: [commit-msg]
 
+    - id: PEP-672
+      name: PEP-672
+      stages: [manual]
+      entry: poetry run python3 hooks/check_pep672_ascii.py
+      language: system
+
+    - id: forbidden-files
+      name: forbidden-files
+      stages: [manual]
+      entry: poetry run python3 hooks/forbidden_files.py
+      language: system
+      pass_filenames: false
+      args: ["-f", "hooks/forbidden_files.py"]

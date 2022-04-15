@@ -34,7 +34,8 @@ def test_forbidden_files(tmp_path: Path) -> None:
         f.write("I edited it!")
     subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True)
 
-    forbidden_list = forbidden_files._get_file_list(protected_list, "")
+    forbidden_list = forbidden_files._get_file_list(protected_list, "",
+                                                    tmp_path)
     with pytest.raises(PermissionError):
         forbidden_files.protect_files(forbidden_list, cwd=tmp_path)
 
@@ -59,6 +60,7 @@ def test_non_forbidden_files(tmp_path: Path) -> None:
         f.write("I edited it!")
     subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True)
 
-    forbidden_list = forbidden_files._get_file_list(protected_list, "")
+    forbidden_list = forbidden_files._get_file_list(protected_list, "",
+                                                    tmp_path)
     assert(forbidden_files.protect_files(forbidden_list,
-                                         cwd=tmp_path) == None)
+                                         tmp_path) == None)
