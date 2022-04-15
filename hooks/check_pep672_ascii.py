@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Check for PEP-672 (ASCII-only chars in source code) compliance."""
 
 import argparse
