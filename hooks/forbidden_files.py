@@ -40,5 +40,6 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--files", type=str, default="", nargs="+",
                         help="Whitespace-separated paths to protect.")
     args = parser.parse_args()
-    file_list = _get_file_list(Path(args.list), args.files, Path.cwd())
-    protect_files(file_list, Path.cwd())
+    cwd = Path.cwd()
+    file_list = _get_file_list(cwd / Path(args.list), args.files, cwd)
+    protect_files(file_list, cwd)
