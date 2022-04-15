@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Script to prevent git editing of a list of protected files."""
 
 import subprocess
