@@ -128,6 +128,6 @@
 - id: forbidden-files
   name: forbidden-files
   description: Prevents edits to a predefined list of files.
-  entry: hooks/prevent-file-edits.py
+  entry: hooks/forbidden_files.py
   language: script
   pass_filenames: false
