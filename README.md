@@ -5,22 +5,25 @@
 This repo defines Git pre-commit hooks intended for use with [pre-commit](http://pre-commit.com/). The currently
 supported hooks are:
 
-* **terraform-fmt**: Rewrites all Terraform configuration files to a canonical format
-* **terraform-validate**: Validates all Terraform configuration files
-* **packer-validate**: Validates all Packer configuration files
-* **tflint**: Linter for Terraform source code
-* **terragrunt-hclfmt**: Rewrites all Terragrunt configuration files to a canonical format
-* **shellcheck**: Performs linting on bash scripts
-* **gofmt**: Gofmt formats Go programs
-* **goimports**: Goimports updates imports and formats in the same style as gofmt
-* **golint**: Golint is a linter for Go source code
-* **yapf**: yapf (Yet Another Python Formatter) is a python formatter from Google
-* **helmlint**: Run helm lint, a linter for helm charts
-* **markdown-link-check**: Run markdown-link-check to check all the relative and absolute links in markdown docs.
-* **check-terratest-skip-env**: Check all go source files for any uncommented os.Setenv calls setting a terratest SKIP environment.
-* **conventional-pre-commit**: Checks commit message for Conventional Commits formatting
-* **PEP-672**: Checks Python files for PEP-672 violations, non-ASCII characters.
-* **forbidden-files**: Prevents edits to a predefined list of files.
+* **terraform-fmt**: Automatically run `terraform fmt` on all Terraform code (`*.tf` files).
+* **terraform-validate**: Automatically run `terraform validate` on all Terraform code (`*.tf` files).
+* **packer-validate**: Automatically run `packer validate` on all Packer code (`*.pkr.*` files).
+* **terragrunt-hclfmt**: Automatically run `terragrunt hclfmt` on all Terragrunt configurations.
+* **tflint**: Automatically run [`tflint`](https://github.com/terraform-linters/tflint) on all Terraform code (`*.tf` files).
+* **shellcheck**: Run [`shellcheck`](https://www.shellcheck.net/) to lint files that contain a bash [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)).
+* **gofmt**: Automatically run `gofmt` on all Golang code (`*.go` files).
+* **goimports**: Automatically run `goimports` on all Golang code (`*.go` files).
+* **golint**: Automatically run `golint` on all Golang code (`*.go` files). [**DEPRECATED**]: Please use `golangci-lint` below.
+* **golangci-lint**: Automatically run `golangci-lint` on all Golang code (`*.go` files).
+* **yapf**: Automatically run [`yapf`](https://github.com/google/yapf) on all python code (`*.py` files).
+* **helmlint** Automatically run [`helm lint`](https://helm.sh/docs/helm/helm_lint/) on your Helm chart files. [See caveats here](#helm-lint-caveats).
+* **markdown-link-check** Automatically run [markdown-link-check](https://github.com/tcort/markdown-link-check) on
+  markdown doc files.
+* **sentinel-fmt**: Automatically run `sentinel fmt` on all Sentinel code (`*.sentinel.*` files).
+
+
+
+
 
 ## General Usage
 

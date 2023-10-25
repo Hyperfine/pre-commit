@@ -76,6 +76,15 @@
   files: \.go$
   exclude: vendor\/.*$
 
+- id: golangci-lint
+  name: golangci-lint
+  description: golangci-lint is a Go linters aggregator
+  entry: hooks/golangci-lint.sh
+  language: script
+  language: script
+  files: \.go$
+  require_serial: true
+
 - id: yapf
   name: yapf
   description: yapf (Yet Another Python Formatter) is a python formatter from Google
@@ -131,3 +140,11 @@
   entry: hooks/forbidden_files.py
   language: script
   pass_filenames: false
+  
+- id: sentinel-fmt
+  name: Sentinel fmt
+  description: Rewrites all Sentinel configuration files to a canonical format
+  entry: hooks/sentinel-fmt.sh
+  language: script
+  files: \.sentinel$
+  require_serial: true
